@@ -1,0 +1,25 @@
+{
+  "name": "MathtestGabiI",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:20",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Russian Math Tutor",
+      "onAutoForward": "openBrowser",
+      "visibility": "public"
+    }
+  },
+  "postCreateCommand": "bash -lc 'cd russian-math-tutor && npm ci'",
+  "postStartCommand": "bash -lc 'cd russian-math-tutor && npm start'",
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "russian-math-tutor/README.md"
+      ]
+    }
+  }
+}
+
+

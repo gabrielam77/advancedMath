@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Graduation Cap -->
+  <g>
+    <polygon points="100,300 400,150 850,400 400,650" fill="#2d3748"/>
+    <rect x="350" y="300" width="100" height="350" fill="#2d3748"/>
+  </g>
+  
+  <!-- Ball segments -->
+  <g>
+    <circle cx="512" cy="512" r="280" fill="white" stroke="#000" stroke-width="8"/>
+    
+    <!-- Blue segment -->
+    <path d="M 512,232 A 280,280 0 0,1 692,412 L 512,512 Z" fill="#0099ff"/>
+    
+    <!-- Yellow segment -->
+    <path d="M 692,412 A 280,280 0 0,1 692,612 L 512,512 Z" fill="#ffd700"/>
+    
+    <!-- Red segment -->
+    <path d="M 692,612 A 280,280 0 0,1 512,792 L 512,512 Z" fill="#ff3333"/>
+    
+    <!-- Center circle -->
+    <circle cx="512" cy="512" r="50" fill="white" stroke="#000" stroke-width="6"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="512" y="950" font-family="Arial, sans-serif" font-size="120" font-weight="bold" text-anchor="middle" fill="#000">
+    B.Z.I.EDUCATION
+  </text>
+</svg>
