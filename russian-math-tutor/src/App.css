@@ -10,6 +10,7 @@
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  direction: rtl;
 }
 
 .App-header {
@@ -89,14 +90,14 @@
   padding: 1rem;
   background: #f7fafc;
   border-radius: 10px;
-  border-left: 4px solid #4299e1;
+  border-right: 4px solid #4299e1;
   min-height: 1.5rem;
 }
 
 .error {
   color: #e53e3e;
   background: #fed7d7;
-  border-left-color: #e53e3e;
+  border-right-color: #e53e3e;
 }
 
 .controls {
@@ -176,7 +177,7 @@
   padding: 1.5rem;
   background: #edf2f7;
   border-radius: 10px;
-  text-align: left;
+  text-align: right;
 }
 
 .session-info p {

@@ -11,29 +11,29 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
   const [session, setSession] = useState<Session | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [isSessionActive, setIsSessionActive] = useState(false);
-  const [status, setStatus] = useState<string>('Нажмите "Начать" для запуска');
+  const [status, setStatus] = useState<string>('לחצו על "התחל" כדי להתחיל');
   
   const { isListening, isSpeaking, isSupported, speak, listen, parseNumber, stop, error } = useVoiceRecognition();
 
   const startSession = useCallback(async () => {
     if (!isSupported) {
-      setStatus('Голосовые функции не поддерживаются в этом браузере');
+      setStatus('פונקציות קול לא נתמכות בדפדפן זה');
       return;
     }
 
     try {
       setIsSessionActive(true);
-      setStatus('Начинаем урок...');
+      setStatus('מתחילים שיעור...');
       
       // Start with Label 1
       const newSession = QuestionService.createSession(1);
       setSession(newSession);
       
-      await speak('Привет! Давайте решать примеры.');
+      await speak('שלום! בואו נפתור תרגילים.');
       await askNextQuestion(newSession);
       
     } catch (err) {
-      setStatus(`Ошибка: ${err instanceof Error ? err.message : 'Неизвестная ошибка'}`);
+      setStatus(`שגיאה: ${err instanceof Error ? err.message : 'שגיאה לא ידועה'}`);
       setIsSessionActive(false);
     }
   }, [isSupported, speak]);
@@ -51,7 +51,7 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
     
     try {
       await speak(questionText);
-      setStatus(`Вопрос: ${question.expression} = ?`);
+      setStatus(`שאלה: ${question.expression} = ?`);
       
       // Listen for answer
       const speechResult = await listen();
@@ -60,14 +60,14 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
       if (answer !== null) {
         await processAnswer(currentSession, answer);
       } else {
-        setStatus('Не удалось распознать ответ. Попробуйте еще раз.');
-        await speak('Не удалось распознать ответ. Повторите, пожалуйста.');
+        setStatus('לא הצלחתי לזהות את התשובה. נסו שוב.');
+        await speak('לא הצלחתי לזהות את התשובה. אנא חזרו על זה.');
         // Ask the same question again
         setTimeout(() => askNextQuestion(currentSession), 1000);
       }
       
     } catch (err) {
-      setStatus(`Ошибка при обработке вопроса: ${err instanceof Error ? err.message : 'Неизвестная ошибка'}`);
+      setStatus(`שגיאה בעיבוד השאלה: ${err instanceof Error ? err.message : 'שגיאה לא ידועה'}`);
     }
   }, [speak, listen, parseNumber]);
 
@@ -78,11 +78,11 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
     const currentQ = updatedSession.questions[updatedSession.currentQuestionIndex - 1];
     
     if (currentQ.isCorrect) {
-      await speak('Правильно!');
-      setStatus(`Правильно! ${currentQ.expression} = ${currentQ.correctAnswer}`);
+      await speak('נכון!');
+      setStatus(`נכון! ${currentQ.expression} = ${currentQ.correctAnswer}`);
     } else {
-      await speak(`Неправильно. Правильный ответ: ${QuestionService.formatQuestionForSpeech({ ...currentQ, expression: `${currentQ.expression} = ${currentQ.correctAnswer}` })}`);
-      setStatus(`Неправильно. ${currentQ.expression} = ${currentQ.correctAnswer}`);
+      await speak(`לא נכון. התשובה הנכונה היא: ${QuestionService.formatQuestionForSpeech({ ...currentQ, expression: `${currentQ.expression} = ${currentQ.correctAnswer}` })}`);
+      setStatus(`לא נכון. ${currentQ.expression} = ${currentQ.correctAnswer}`);
     }
 
     // Continue with next question after a short pause
@@ -99,7 +99,7 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
     const summary = QuestionService.getSessionSummary(completedSession);
     
     // Report results
-    const resultText = `Всего было ${summary.totalQuestions} вопросов, неправильных ответов: ${summary.incorrectCount}`;
+    const resultText = `בסך הכל היו ${summary.totalQuestions} שאלות, תשובות שגויות: ${summary.incorrectCount}`;
     await speak(resultText);
     setStatus(resultText);
 
@@ -107,7 +107,7 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
       // Report errors and restart current label
       const errorsText = QuestionService.formatErrorsForSpeech(summary.errors);
       await speak(errorsText);
-      await speak('Повторяем.');
+      await speak('חוזרים על זה.');
       
       // Restart current label
       setTimeout(() => {
@@ -119,7 +119,7 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
     } else {
       // Move to next label or complete
       if (completedSession.currentLabel === 1) {
-        await speak('Переходим к следующему уровню.');
+        await speak('עוברים לשלב הבא.');
         setTimeout(() => {
           const newSession = QuestionService.createSession(2);
           setSession(newSession);
@@ -127,8 +127,8 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
         }, 2000);
       } else {
         // All done!
-        await speak('Ты хорошо поработал!');
-        setStatus('Урок завершен! Ты хорошо поработал!');
+        await speak('עבדת מצוין!');
+        setStatus('השיעור הסתיים! עבדת מצוין!');
         setIsSessionActive(false);
         onSessionComplete();
       }
@@ -140,7 +140,7 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
     setIsSessionActive(false);
     setSession(null);
     setCurrentQuestion(null);
-    setStatus('Урок остановлен');
+    setStatus('השיעור הופסק');
   }, [stop]);
 
   const historyContainerRef = useRef<HTMLDivElement | null>(null);
@@ -158,8 +158,8 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
   if (!isSupported) {
     return (
       <div className="voice-controller error">
-        <h2>Ошибка</h2>
-        <p>Ваш браузер не поддерживает голосовые функции. Попробуйте использовать Chrome или другой современный браузер.</p>
+        <h2>שגיאה</h2>
+        <p>הדפדפן שלך לא תומך בפונקציות קול. אנא נסה להשתמש ב-Chrome או דפדפן מודרני אחר.</p>
       </div>
     );
   }
@@ -167,9 +167,9 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
   return (
     <div className="voice-controller">
       <div className="status-section">
-        <h2>Математический тренажер</h2>
+        <h2>מאמן מתמטיקה</h2>
         <p className="status">{status}</p>
-        {error && <p className="error">Ошибка: {error}</p>}
+        {error && <p className="error">שגיאה: {error}</p>}
       </div>
 
       <div className="controls">
@@ -179,44 +179,44 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
             className="start-button"
             disabled={isSpeaking}
           >
-            Начать
+            התחל
           </button>
         ) : (
           <button 
             onClick={stopSession}
             className="stop-button"
           >
-            Остановить
+            עצור
           </button>
         )}
       </div>
 
       <div className="indicators">
-        {isListening && <div className="indicator listening">🎤 Слушаю...</div>}
-        {isSpeaking && <div className="indicator speaking">🔊 Говорю...</div>}
+        {isListening && <div className="indicator listening">🎤 מאזין...</div>}
+        {isSpeaking && <div className="indicator speaking">🔊 מדבר...</div>}
       </div>
 
       {session && (
         <div className="session-info">
-          <p>Уровень: {session.currentLabel}</p>
-          <p>Вопрос: {session.currentQuestionIndex + 1} из {session.questions.length}</p>
+          <p>רמה: {session.currentLabel}</p>
+          <p>שאלה: {session.currentQuestionIndex + 1} מתוך {session.questions.length}</p>
           {currentQuestion && (
             <div className="current-question">
               <h3>{currentQuestion.expression} = ?</h3>
             </div>
           )}
 
-          <div className="answer-history" ref={historyContainerRef} aria-label="История ответов">
-            <h4>История ответов</h4>
+          <div className="answer-history" ref={historyContainerRef} aria-label="היסטוריית תשובות">
+            <h4>היסטוריית תשובות</h4>
             {answeredQuestions.length === 0 ? (
-              <p className="answer-history-empty">Пока нет ответов</p>
+              <p className="answer-history-empty">אין תשובות עדיין</p>
             ) : (
               <ul className="answer-list">
                 {answeredQuestions.map((q) => (
                   <li key={q.id} className={`answer-item ${q.isCorrect ? 'correct' : 'incorrect'}`}>
                     <span className="answer-expression">{q.expression}</span>
-                    <span className="answer-user">Ваш ответ: {String(q.userAnswer)}</span>
-                    <span className="answer-result">{q.isCorrect ? '✔ Верно' : `✘ Правильно: ${q.correctAnswer}`}</span>
+                    <span className="answer-user">התשובה שלך: {String(q.userAnswer)}</span>
+                    <span className="answer-result">{q.isCorrect ? '✔ נכון' : `✘ התשובה הנכונה: ${q.correctAnswer}`}</span>
                   </li>
                 ))}
               </ul>

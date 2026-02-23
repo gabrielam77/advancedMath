@@ -93,7 +93,7 @@ export class QuestionService {
   }
 
   public static formatQuestionForSpeech(question: Question): string {
-    // Convert math expression to Russian speech
+    // Convert math expression to Hebrew speech
     const parts = question.expression.split(' ');
     let speech = '';
 
@@ -101,17 +101,17 @@ export class QuestionService {
       const part = parts[i].trim();
       
       if (part === '+') {
-        speech += 'плюс ';
+        speech += 'פלוס ';
       } else if (part === '-') {
-        speech += 'минус ';
+        speech += 'מינוס ';
       } else if (part === '×' || part === '*') {
-        speech += 'умножить на ';
+        speech += 'כפול ';
       } else if (part === '÷' || part === '/') {
-        speech += 'разделить на ';
+        speech += 'חלקי ';
       } else {
         // It's a number
         const number = parseInt(part, 10);
-        speech += this.numberToRussianWord(number) + ' ';
+        speech += this.numberToHebrewWord(number) + ' ';
       }
     }
 
@@ -121,13 +121,13 @@ export class QuestionService {
   public static formatErrorsForSpeech(errors: Question[]): string {
     if (errors.length === 0) return '';
 
-    let speech = 'Правильные ответы: ';
+    let speech = 'התשובות הנכונות הן: ';
     
     errors.forEach((error, index) => {
       const questionSpeech = this.formatQuestionForSpeech(error);
-      const answerSpeech = this.numberToRussianWord(error.correctAnswer);
+      const answerSpeech = this.numberToHebrewWord(error.correctAnswer);
       
-      speech += `${questionSpeech} равно ${answerSpeech}`;
+      speech += `${questionSpeech} שווה ${answerSpeech}`;
       
       if (index < errors.length - 1) {
         speech += ', ';
@@ -137,31 +137,31 @@ export class QuestionService {
     return speech;
   }
 
-  private static numberToRussianWord(num: number): string {
-    const russianNumbers: Record<number, string> = {
-      0: 'ноль',
-      1: 'один',
-      2: 'два',
-      3: 'три',
-      4: 'четыре',
-      5: 'пять',
-      6: 'шесть',
-      7: 'семь',
-      8: 'восемь',
-      9: 'девять',
-      10: 'десять',
-      11: 'одиннадцать',
-      12: 'двенадцать',
-      13: 'тринадцать',
-      14: 'четырнадцать',
-      15: 'пятнадцать',
-      16: 'шестнадцать',
-      17: 'семнадцать',
-      18: 'восемнадцать',
-      19: 'девятнадцать',
-      20: 'двадцать'
+  private static numberToHebrewWord(num: number): string {
+    const hebrewNumbers: Record<number, string> = {
+      0: 'אפס',
+      1: 'אחד',
+      2: 'שניים',
+      3: 'שלוש',
+      4: 'אַרבע',
+      5: 'חמש',
+      6: 'שש',
+      7: 'שבע',
+      8: 'שמונה',
+      9: 'תשע',
+      10: 'עשר',
+      11: 'אחת עשרה',
+      12: 'שתיים עשרה',
+      13: 'שלוש עשרה',
+      14: 'ארבע עשרה',
+      15: 'חמש עשרה',
+      16: 'שש עשרה',
+      17: 'שבע עשרה',
+      18: 'שמונה עשרה',
+      19: 'תשע עשרה',
+      20: 'עשרים'
     };
 
-    return russianNumbers[num] || num.toString();
+    return hebrewNumbers[num] || num.toString();
   }
 }

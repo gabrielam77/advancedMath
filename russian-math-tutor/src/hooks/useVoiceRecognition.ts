@@ -59,7 +59,7 @@ export const useVoiceRecognition = (): UseVoiceRecognitionReturn => {
 
   const parseNumber = useCallback((speech: string): number | null => {
     if (!voiceServiceRef.current) return null;
-    return voiceServiceRef.current.parseRussianNumber(speech);
+    return voiceServiceRef.current.parseHebrewNumber(speech);
   }, []);
 
   const stop = useCallback(() => {

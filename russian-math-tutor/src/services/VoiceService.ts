@@ -1,22 +1,22 @@
-import { VoiceConfig, RUSSIAN_NUMBERS } from '../types';
+import { VoiceConfig, HEBREW_NUMBERS } from '../types';
 
 export class VoiceService {
   private synthesis: SpeechSynthesis;
   private recognition: SpeechRecognition | null = null;
   private config: VoiceConfig;
-  private russianVoice: SpeechSynthesisVoice | null = null;
+  private hebrewVoice: SpeechSynthesisVoice | null = null;
 
   constructor() {
     this.synthesis = window.speechSynthesis;
     this.config = {
-      lang: 'ru-RU',
+      lang: 'he-IL',
       rate: 0.8, // Slower for learning
       pitch: 1.0,
       volume: 1.0
     };
     
     this.initializeRecognition();
-    this.loadRussianVoice();
+    this.loadHebrewVoice();
   }
 
   private initializeRecognition(): void {
@@ -27,19 +27,19 @@ export class VoiceService {
     }
 
     if (this.recognition) {
-      this.recognition.lang = 'ru-RU';
+      this.recognition.lang = 'he-IL';
       this.recognition.continuous = false;
       this.recognition.interimResults = false;
       this.recognition.maxAlternatives = 1;
     }
   }
 
-  private loadRussianVoice(): void {
+  private loadHebrewVoice(): void {
     const loadVoices = () => {
       const voices = this.synthesis.getVoices();
-      this.russianVoice = voices.find(voice => 
-        voice.lang.startsWith('ru') || 
-        voice.name.toLowerCase().includes('russian')
+      this.hebrewVoice = voices.find(voice => 
+        voice.lang.startsWith('he') || 
+        voice.name.toLowerCase().includes('hebrew')
       ) || null;
     };
 
@@ -65,8 +65,8 @@ export class VoiceService {
       utterance.pitch = this.config.pitch;
       utterance.volume = this.config.volume;
 
-      if (this.russianVoice) {
-        utterance.voice = this.russianVoice;
+      if (this.hebrewVoice) {
+        utterance.voice = this.hebrewVoice;
       }
 
       utterance.onend = () => resolve();
@@ -105,12 +105,12 @@ export class VoiceService {
     });
   }
 
-  public parseRussianNumber(speech: string): number | null {
+  public parseHebrewNumber(speech: string): number | null {
     const cleaned = speech.toLowerCase().trim();
     
-    // Direct lookup in Russian numbers
-    if (RUSSIAN_NUMBERS[cleaned]) {
-      return RUSSIAN_NUMBERS[cleaned];
+    // Direct lookup in Hebrew numbers
+    if (HEBREW_NUMBERS[cleaned]) {
+      return HEBREW_NUMBERS[cleaned];
     }
 
     // Try to parse as Arabic numeral
@@ -120,8 +120,8 @@ export class VoiceService {
     }
 
     // Handle partial matches or variations
-    for (const [russian, number] of Object.entries(RUSSIAN_NUMBERS)) {
-      if (cleaned.includes(russian) || russian.includes(cleaned)) {
+    for (const [hebrew, number] of Object.entries(HEBREW_NUMBERS)) {
+      if (cleaned.includes(hebrew) || hebrew.includes(cleaned)) {
         return number;
       }
     }
@@ -142,12 +142,12 @@ export class VoiceService {
 
   public getAvailableVoices(): SpeechSynthesisVoice[] {
     return this.synthesis.getVoices().filter(voice => 
-      voice.lang.startsWith('ru')
+      voice.lang.startsWith('he')
     );
   }
 
   public setVoice(voice: SpeechSynthesisVoice): void {
-    this.russianVoice = voice;
+    this.hebrewVoice = voice;
   }
 
   public updateConfig(newConfig: Partial<VoiceConfig>): void {
