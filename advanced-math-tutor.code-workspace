@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"name": "Advanced Math Tutor",
+			"path": "."
+		},
+		{
+			"name": "React App",
+			"path": "russian-math-tutor"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/node_modules": true,
+			"**/build": true,
+			"**/dist": true,
+			"**/.git": false
+		},
+		"typescript.tsdk": "russian-math-tutor/node_modules/typescript/lib"
+	}
+}
