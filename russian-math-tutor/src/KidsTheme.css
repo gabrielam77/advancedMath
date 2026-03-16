@@ -1,0 +1,258 @@
+/* אנימציות לעיצוב ידידותי לילדים */
+
+/* אנימציית כנפיים לדרקון */
+@keyframes wing-flap {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.8); }
+}
+
+.dragon-wings {
+  animation: wing-flap 1.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* זוהר סביב הדרקון */
+@keyframes dragon-glow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 10px rgba(159, 122, 234, 0.5)); 
+  }
+  50% { 
+    filter: drop-shadow(0 0 20px rgba(183, 148, 244, 0.8)); 
+  }
+}
+
+.dragon-mascot {
+  animation: dragon-glow 2s ease-in-out infinite;
+}
+
+/* נצנוץ צבעוני */
+@keyframes colorful-glow {
+  0% { filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.6)); }
+  33% { filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.8)); }
+  66% { filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.8)); }
+  100% { filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.6)); }
+}
+
+.animate-colorful-glow {
+  animation: colorful-glow 3s ease-in-out infinite;
+}
+
+/* פופ אנרגטי */
+@keyframes pop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.animate-pop {
+  animation: pop 0.6s ease-in-out;
+}
+
+/* כוכבים מנצנצים */
+@keyframes twinkle {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 0.3; 
+    transform: scale(0.8); 
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+/* עננים צפים */
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-20px); 
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* wiggle לכפתורים */
+@keyframes wiggle {
+  0%, 100% { 
+    transform: rotate(0deg); 
+  }
+  25% { 
+    transform: rotate(5deg); 
+  }
+  75% { 
+    transform: rotate(-5deg); 
+  }
+}
+
+.animate-wiggle {
+  animation: wiggle 1s ease-in-out infinite;
+}
+
+/* זוהר קסום */
+@keyframes glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); 
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); 
+  }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* קפיצה */
+@keyframes bounce-fun {
+  0%, 100% { 
+    transform: translateY(0); 
+  }
+  50% { 
+    transform: translateY(-15px); 
+  }
+}
+
+.animate-bounce-fun {
+  animation: bounce-fun 1s ease-in-out infinite;
+}
+
+/* סיבוב */
+@keyframes spin-slow {
+  from { 
+    transform: rotate(0deg); 
+  }
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+/* רעידה */
+@keyframes shake {
+  0%, 100% { 
+    transform: translateX(0); 
+  }
+  10%, 30%, 50%, 70%, 90% { 
+    transform: translateX(-5px); 
+  }
+  20%, 40%, 60%, 80% { 
+    transform: translateX(5px); 
+  }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* דופק */
+@keyframes pulse-strong {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: scale(1.1); 
+    opacity: 0.8; 
+  }
+}
+
+.animate-pulse-strong {
+  animation: pulse-strong 1.5s ease-in-out infinite;
+}
+
+/* קונפטי */
+@keyframes confetti-fall {
+  0% { 
+    transform: translateY(-100px) rotate(0deg); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: translateY(100vh) rotate(720deg); 
+    opacity: 0; 
+  }
+}
+
+.animate-confetti {
+  animation: confetti-fall 3s ease-out forwards;
+}
+
+/* עננים ברקע */
+.clouds-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cloud {
+  position: absolute;
+  font-size: 3rem;
+  opacity: 0.3;
+  animation: float 4s ease-in-out infinite;
+}
+
+.cloud:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+.cloud:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; }
+.cloud:nth-child(3) { top: 60%; left: 20%; animation-delay: 2s; }
+.cloud:nth-child(4) { top: 70%; right: 25%; animation-delay: 1.5s; }
+
+/* כוכבים ברקע */
+.stars-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  font-size: 1.5rem;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+.star:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
+.star:nth-child(2) { top: 25%; right: 20%; animation-delay: 0.5s; }
+.star:nth-child(3) { top: 45%; left: 30%; animation-delay: 1s; }
+.star:nth-child(4) { top: 65%; right: 15%; animation-delay: 1.5s; }
+.star:nth-child(5) { top: 75%; left: 25%; animation-delay: 2s; }
+.star:nth-child(6) { top: 35%; right: 35%; animation-delay: 2.5s; }
+
+/* התאמות לאלמנטים אינטראקטיביים */
+button:active {
+  transform: scale(0.95);
+}
+
+button:hover {
+  filter: brightness(1.1);
+}
+
+/* התאמות לטקסט קריא */
+h1, h2, h3, h4, h5, h6 {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* התאמות למסכים קטנים */
+@media (max-width: 640px) {
+  .cloud {
+    font-size: 2rem;
+  }
+  
+  .star {
+    font-size: 1rem;
+  }
+}

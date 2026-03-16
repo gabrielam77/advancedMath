@@ -1,11 +1,44 @@
 // Types for the Hebrew Math Tutor application
 
+export enum QuestionCategory {
+  ADDITION = 'addition',
+  SUBTRACTION = 'subtraction',
+  MULTIPLICATION = 'multiplication',
+  DIVISION = 'division',
+  MIXED = 'mixed'
+}
+
+export enum DifficultyLevel {
+  EASY = 'easy',      // 1-10
+  MEDIUM = 'medium',  // 1-20
+  HARD = 'hard'       // 1-100
+}
+
 export interface Question {
   id: string;
   expression: string; // "2 + 1"
   correctAnswer: number;
   userAnswer?: number;
   isCorrect?: boolean;
+  category?: QuestionCategory;
+  difficulty?: DifficultyLevel;
+}
+
+export interface QuestionTemplate {
+  id: string;
+  category: QuestionCategory;
+  difficulty: DifficultyLevel;
+  expression: string;
+  correctAnswer: number;
+  hint?: string;
+  tags?: string[];
+  createdAt?: string;
+}
+
+export interface QuestionBank {
+  version: string;
+  questions: QuestionTemplate[];
+  categories: Record<QuestionCategory, number>;
 }
 
 export interface Session {
@@ -14,6 +47,35 @@ export interface Session {
   currentQuestionIndex: number;
   errors: Question[];
   isComplete: boolean;
+  category?: QuestionCategory;
+  difficulty?: DifficultyLevel;
+  startTime?: string;
+  endTime?: string;
+}
+
+export interface StudentProgress {
+  totalQuestionsAnswered: number;
+  correctAnswers: number;
+  incorrectAnswers: number;
+  categoriesProgress: Record<QuestionCategory, {
+    attempted: number;
+    correct: number;
+    accuracy: number;
+  }>;
+  lastSessionDate: string;
+  streak: number;
+  sessionHistory: SessionSummary[];
+}
+
+export interface SessionSummary {
+  id: string;
+  date: string;
+  category: QuestionCategory;
+  difficulty: DifficultyLevel;
+  totalQuestions: number;
+  correctAnswers: number;
+  accuracy: number;
+  duration: number;
 }
 
 export interface VoiceConfig {

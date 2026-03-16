@@ -1,19 +1,45 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
-import { Question, Session } from '../types';
+import { Question, Session, QuestionCategory, DifficultyLevel, SessionSummary } from '../types';
 import { QuestionService } from '../services/QuestionService';
+import { ProgressService } from '../services/ProgressService';
+import { QuestionDisplay } from './QuestionDisplay';
+import { ProgressBar } from './ProgressBar';
+import { AnswerHistory } from './AnswerHistory';
+import { DragonMascot } from './DragonMascot';
+import { motion } from 'framer-motion';
 
 interface VoiceControllerProps {
+  category?: QuestionCategory;
+  difficulty?: DifficultyLevel;
+  questionCount: number;
   onSessionComplete: () => void;
+  onBack: () => void;
 }
 
-export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionComplete }) => {
+export const VoiceController: React.FC<VoiceControllerProps> = ({ 
+  category, 
+  difficulty, 
+  questionCount, 
+  onSessionComplete,
+  onBack 
+}) => {
+  const progressService = ProgressService.getInstance();
   const [session, setSession] = useState<Session | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [status, setStatus] = useState<string>('לחצו על "התחל" כדי להתחיל');
+  const [dragonMessage, setDragonMessage] = useState<string>('');
+  const [dragonMood, setDragonMood] = useState<'happy' | 'encouraging' | 'neutral'>('neutral');
   
   const { isListening, isSpeaking, isSupported, speak, listen, parseNumber, stop, error } = useVoiceRecognition();
+
+  // Auto-start session when component mounts
+  useEffect(() => {
+    if (!isSessionActive && !session) {
+      startSession();
+    }
+  }, []);
 
   const startSession = useCallback(async () => {
     if (!isSupported) {
@@ -25,8 +51,7 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
       setIsSessionActive(true);
       setStatus('מתחילים שיעור...');
       
-      // Start with Label 1
-      const newSession = QuestionService.createSession(1);
+      const newSession = QuestionService.createSession(category, difficulty, questionCount);
       setSession(newSession);
       
       await speak('שלום! בואו נפתור תרגילים.');
@@ -36,7 +61,7 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
       setStatus(`שגיאה: ${err instanceof Error ? err.message : 'שגיאה לא ידועה'}`);
       setIsSessionActive(false);
     }
-  }, [isSupported, speak]);
+  }, [isSupported, speak, category, difficulty, questionCount]);
 
   const askNextQuestion = useCallback(async (currentSession: Session) => {
     const question = QuestionService.getNextQuestion(currentSession);
@@ -77,62 +102,76 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
 
     const currentQ = updatedSession.questions[updatedSession.currentQuestionIndex - 1];
     
+    // Record answer in progress service
+    if (currentQ.category) {
+      progressService.recordAnswer(currentQ.category, currentQ.isCorrect || false);
+    }
+
     if (currentQ.isCorrect) {
-      await speak('נכון!');
+      setDragonMood('happy');
+      setDragonMessage('כל הכבוד! אתה מדהים! 🎉');
+      await speak('נכון! כל הכבוד!');
       setStatus(`נכון! ${currentQ.expression} = ${currentQ.correctAnswer}`);
     } else {
-      await speak(`לא נכון. התשובה הנכונה היא: ${QuestionService.formatQuestionForSpeech({ ...currentQ, expression: `${currentQ.expression} = ${currentQ.correctAnswer}` })}`);
+      setDragonMood('encouraging');
+      setDragonMessage('לא נורא, פעם הבאה תצליח! אני מאמין בך! 💪');
+      await speak('לא נכון. לא נורא, פעם הבאה תצליח!');
       setStatus(`לא נכון. ${currentQ.expression} = ${currentQ.correctAnswer}`);
     }
 
     // Continue with next question after a short pause
     setTimeout(() => {
+      setDragonMessage(''); // נקה את ההודעה
+      setDragonMood('neutral');
       if (updatedSession.isComplete) {
         handleSessionComplete(updatedSession);
       } else {
         askNextQuestion(updatedSession);
       }
-    }, 2000);
+    }, 3000);
   }, [speak]);
 
   const handleSessionComplete = useCallback(async (completedSession: Session) => {
     const summary = QuestionService.getSessionSummary(completedSession);
     
+    // Save session to progress service
+    const correctCount = summary.totalQuestions - summary.incorrectCount;
+    const accuracy = (correctCount / summary.totalQuestions) * 100;
+    const duration = completedSession.startTime && completedSession.endTime
+      ? new Date(completedSession.endTime).getTime() - new Date(completedSession.startTime).getTime()
+      : 0;
+
+    const sessionSummary: Omit<SessionSummary, 'id'> = {
+      date: new Date().toISOString(),
+      category: completedSession.category || QuestionCategory.MIXED,
+      difficulty: completedSession.difficulty || DifficultyLevel.EASY,
+      totalQuestions: summary.totalQuestions,
+      correctAnswers: correctCount,
+      accuracy,
+      duration,
+    };
+
+    progressService.completeSession(sessionSummary);
+
     // Report results
     const resultText = `בסך הכל היו ${summary.totalQuestions} שאלות, תשובות שגויות: ${summary.incorrectCount}`;
     await speak(resultText);
     setStatus(resultText);
 
     if (summary.incorrectCount > 0) {
-      // Report errors and restart current label
+      // Report errors
       const errorsText = QuestionService.formatErrorsForSpeech(summary.errors);
       await speak(errorsText);
-      await speak('חוזרים על זה.');
-      
-      // Restart current label
-      setTimeout(() => {
-        const newSession = QuestionService.createSession(completedSession.currentLabel);
-        setSession(newSession);
-        askNextQuestion(newSession);
-      }, 2000);
-      
-    } else {
-      // Move to next label or complete
-      if (completedSession.currentLabel === 1) {
-        await speak('עוברים לשלב הבא.');
-        setTimeout(() => {
-          const newSession = QuestionService.createSession(2);
-          setSession(newSession);
-          askNextQuestion(newSession);
-        }, 2000);
-      } else {
-        // All done!
-        await speak('עבדת מצוין!');
-        setStatus('השיעור הסתיים! עבדת מצוין!');
-        setIsSessionActive(false);
-        onSessionComplete();
-      }
     }
+
+    await speak('עבדת מצוין!');
+    setStatus('השיעור הסתיים! עבדת מצוין!');
+    setIsSessionActive(false);
+    
+    // Call parent callback
+    setTimeout(() => {
+      onSessionComplete();
+    }, 2000);
   }, [speak, onSessionComplete]);
 
   const stopSession = useCallback(() => {
@@ -143,87 +182,116 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({ onSessionCompl
     setStatus('השיעור הופסק');
   }, [stop]);
 
-  const historyContainerRef = useRef<HTMLDivElement | null>(null);
-  const answeredQuestions = useMemo(() => {
-    if (!session) return [] as Question[];
-    return session.questions.filter(q => typeof q.userAnswer !== 'undefined');
-  }, [session]);
-
-  useEffect(() => {
-    if (historyContainerRef.current) {
-      historyContainerRef.current.scrollTop = historyContainerRef.current.scrollHeight;
-    }
-  }, [answeredQuestions.length]);
-
   if (!isSupported) {
     return (
-      <div className="voice-controller error">
-        <h2>שגיאה</h2>
-        <p>הדפדפן שלך לא תומך בפונקציות קול. אנא נסה להשתמש ב-Chrome או דפדפן מודרני אחר.</p>
+      <div className="max-w-4xl mx-auto bg-red-50 dark:bg-red-900/20 rounded-xl p-8 text-center">
+        <h2 className="text-2xl font-bold text-red-700 dark:text-red-400 mb-4">שגיאה</h2>
+        <p className="text-red-600 dark:text-red-300">
+          הדפדפן שלך לא תומך בפונקציות קול. אנא נסה להשתמש ב-Chrome או דפדפן מודרני אחר.
+        </p>
       </div>
     );
   }
 
+  const answeredCount = session?.questions.filter(q => typeof q.userAnswer !== 'undefined').length || 0;
+  const correctCount = session?.questions.filter(q => q.isCorrect === true).length || 0;
+  const incorrectCount = session?.questions.filter(q => q.isCorrect === false).length || 0;
+
   return (
-    <div className="voice-controller">
-      <div className="status-section">
-        <h2>מאמן מתמטיקה</h2>
-        <p className="status">{status}</p>
-        {error && <p className="error">שגיאה: {error}</p>}
-      </div>
-
-      <div className="controls">
-        {!isSessionActive ? (
-          <button 
-            onClick={startSession}
-            className="start-button"
-            disabled={isSpeaking}
-          >
-            התחל
-          </button>
-        ) : (
-          <button 
-            onClick={stopSession}
-            className="stop-button"
-          >
-            עצור
-          </button>
-        )}
-      </div>
-
-      <div className="indicators">
-        {isListening && <div className="indicator listening">🎤 מאזין...</div>}
-        {isSpeaking && <div className="indicator speaking">🔊 מדבר...</div>}
-      </div>
-
-      {session && (
-        <div className="session-info">
-          <p>רמה: {session.currentLabel}</p>
-          <p>שאלה: {session.currentQuestionIndex + 1} מתוך {session.questions.length}</p>
+    <div className="grid lg:grid-cols-3 gap-6">
+      {/* Main Session Area */}
+      <div className="lg:col-span-2 space-y-6">
+        {/* דרקון ושאלה */}
+        <div className="flex justify-center items-start gap-8 mb-8">
+          <div className="flex-shrink-0">
+            <DragonMascot mood={dragonMood} message={dragonMessage} />
+          </div>
           {currentQuestion && (
-            <div className="current-question">
-              <h3>{currentQuestion.expression} = ?</h3>
+            <div className="flex-1 max-w-md">
+              <QuestionDisplay
+                question={currentQuestion}
+                questionNumber={session?.currentQuestionIndex || 1}
+                totalQuestions={session?.questions.length || questionCount}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Status Card */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
+              מאמן מתמטיקה
+            </h2>
+            <button
+              onClick={() => {
+                stop();
+                onBack();
+              }}
+              className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+            >
+              ← חזור
+            </button>
+          </div>
+
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-r-4 border-blue-500">
+            <p className="text-gray-800 dark:text-gray-200">{status}</p>
+          </div>
+
+          {error && (
+            <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border-r-4 border-red-500">
+              <p className="text-red-700 dark:text-red-300">שגיאה: {error}</p>
             </div>
           )}
 
-          <div className="answer-history" ref={historyContainerRef} aria-label="היסטוריית תשובות">
-            <h4>היסטוריית תשובות</h4>
-            {answeredQuestions.length === 0 ? (
-              <p className="answer-history-empty">אין תשובות עדיין</p>
-            ) : (
-              <ul className="answer-list">
-                {answeredQuestions.map((q) => (
-                  <li key={q.id} className={`answer-item ${q.isCorrect ? 'correct' : 'incorrect'}`}>
-                    <span className="answer-expression">{q.expression}</span>
-                    <span className="answer-user">התשובה שלך: {String(q.userAnswer)}</span>
-                    <span className="answer-result">{q.isCorrect ? '✔ נכון' : `✘ התשובה הנכונה: ${q.correctAnswer}`}</span>
-                  </li>
-                ))}
-              </ul>
+          {/* Indicators */}
+          <div className="flex gap-4 justify-center mt-6">
+            {isListening && (
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ repeat: Infinity, duration: 1 }}
+                className="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full font-semibold"
+              >
+                🎤 מאזין...
+              </motion.div>
+            )}
+            {isSpeaking && (
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ repeat: Infinity, duration: 1 }}
+                className="px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full font-semibold"
+              >
+                🔊 מדבר...
+              </motion.div>
             )}
           </div>
-        </div>
-      )}
+        </motion.div>
+
+        {/* Progress Bar */}
+        {session && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+            <ProgressBar
+              current={answeredCount}
+              total={session.questions.length}
+              correctCount={correctCount}
+              incorrectCount={incorrectCount}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* History Sidebar */}
+      <div className="lg:col-span-1">
+        {session && (
+          <div className="h-[600px]">
+            <AnswerHistory questions={session.questions} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,39 +1,33 @@
-import { Question, Session } from '../types';
+import { Question, Session, QuestionCategory, DifficultyLevel, QuestionTemplate } from '../types';
+import { QuestionDatabaseService } from './QuestionDatabaseService';
 
 export class QuestionService {
-  // Label 1 questions: addition by 1
-  private static readonly LABEL1_QUESTIONS = [
-    { expression: '2 + 1', answer: 3 },
-    { expression: '5 + 1', answer: 6 },
-    { expression: '7 + 1', answer: 8 },
-    { expression: '3 + 1', answer: 4 },
-    { expression: '9 + 1', answer: 10 }
-  ];
+  private static db = QuestionDatabaseService.getInstance();
 
-  // Label 2 questions: addition by 2
-  private static readonly LABEL2_QUESTIONS = [
-    { expression: '2 + 2', answer: 4 },
-    { expression: '5 + 2', answer: 7 },
-    { expression: '7 + 2', answer: 9 },
-    { expression: '4 + 2', answer: 6 },
-    { expression: '9 + 2', answer: 11 }
-  ];
-
-  public static createSession(label: 1 | 2): Session {
-    const questionData = label === 1 ? this.LABEL1_QUESTIONS : this.LABEL2_QUESTIONS;
+  public static createSession(
+    category?: QuestionCategory,
+    difficulty?: DifficultyLevel,
+    questionCount: number = 10
+  ): Session {
+    const templates = this.db.getRandomQuestions(questionCount, category, difficulty);
     
-    const questions: Question[] = questionData.map((q, index) => ({
-      id: `${label}-${index + 1}`,
-      expression: q.expression,
-      correctAnswer: q.answer
+    const questions: Question[] = templates.map((template, index) => ({
+      id: template.id,
+      expression: template.expression,
+      correctAnswer: template.correctAnswer,
+      category: template.category,
+      difficulty: template.difficulty,
     }));
 
     return {
-      currentLabel: label,
+      currentLabel: 1, // Keep for backward compatibility
       questions,
       currentQuestionIndex: 0,
       errors: [],
-      isComplete: false
+      isComplete: false,
+      category,
+      difficulty,
+      startTime: new Date().toISOString(),
     };
   }
 
@@ -71,13 +65,19 @@ export class QuestionService {
     const nextIndex = session.currentQuestionIndex + 1;
     const isComplete = nextIndex >= session.questions.length;
 
-    return {
+    const updatedSession: Session = {
       ...session,
       questions: updatedQuestions,
       currentQuestionIndex: nextIndex,
       errors: updatedErrors,
-      isComplete
+      isComplete,
     };
+
+    if (isComplete) {
+      updatedSession.endTime = new Date().toISOString();
+    }
+
+    return updatedSession;
   }
 
   public static getSessionSummary(session: Session): {
@@ -159,9 +159,55 @@ export class QuestionService {
       17: 'שבע עשרה',
       18: 'שמונה עשרה',
       19: 'תשע עשרה',
-      20: 'עשרים'
+      20: 'עשרים',
+      21: 'עשרים ואחד',
+      30: 'שלושים',
+      40: 'ארבעים',
+      50: 'חמישים',
+      60: 'שישים',
+      70: 'שבעים',
+      80: 'שמונים',
+      90: 'תשעים',
+      100: 'מאה'
     };
 
-    return hebrewNumbers[num] || num.toString();
+    if (hebrewNumbers[num]) {
+      return hebrewNumbers[num];
+    }
+
+    // Handle numbers > 20
+    if (num > 20 && num < 100) {
+      const tens = Math.floor(num / 10) * 10;
+      const ones = num % 10;
+      if (ones === 0) {
+        return hebrewNumbers[tens] || num.toString();
+      }
+      return `${hebrewNumbers[tens]} ו${hebrewNumbers[ones]}`;
+    }
+
+    return num.toString();
+  }
+
+  // New methods for enhanced functionality
+
+  /**
+   * Get available categories with question counts
+   */
+  public static getAvailableCategories(): Record<QuestionCategory, number> {
+    return this.db.getCategoryStats();
+  }
+
+  /**
+   * Get all questions from database
+   */
+  public static getAllQuestions(): QuestionTemplate[] {
+    return this.db.getAllQuestions();
+  }
+
+  /**
+   * Search questions
+   */
+  public static searchQuestions(term: string): QuestionTemplate[] {
+    return this.db.searchQuestions(term);
   }
 }

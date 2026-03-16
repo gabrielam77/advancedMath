@@ -1,0 +1,772 @@
+{
+  "version": "1.0.0",
+  "questions": [
+    {
+      "id": "add-easy-001",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "1 + 1",
+      "correctAnswer": 2,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-002",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "2 + 1",
+      "correctAnswer": 3,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-003",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "3 + 1",
+      "correctAnswer": 4,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-004",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "4 + 1",
+      "correctAnswer": 5,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-005",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "5 + 1",
+      "correctAnswer": 6,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-006",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "2 + 2",
+      "correctAnswer": 4,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-007",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "3 + 2",
+      "correctAnswer": 5,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-008",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "4 + 2",
+      "correctAnswer": 6,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-009",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "5 + 2",
+      "correctAnswer": 7,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-010",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "6 + 2",
+      "correctAnswer": 8,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-011",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "3 + 3",
+      "correctAnswer": 6,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-012",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "4 + 3",
+      "correctAnswer": 7,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-013",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "5 + 3",
+      "correctAnswer": 8,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-014",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "6 + 3",
+      "correctAnswer": 9,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-015",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "7 + 3",
+      "correctAnswer": 10,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-016",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "4 + 4",
+      "correctAnswer": 8,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-017",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "5 + 4",
+      "correctAnswer": 9,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-018",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "6 + 4",
+      "correctAnswer": 10,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-019",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "5 + 5",
+      "correctAnswer": 10,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-easy-020",
+      "category": "addition",
+      "difficulty": "easy",
+      "expression": "1 + 9",
+      "correctAnswer": 10,
+      "tags": ["basic"]
+    },
+    {
+      "id": "add-medium-001",
+      "category": "addition",
+      "difficulty": "medium",
+      "expression": "7 + 5",
+      "correctAnswer": 12,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "add-medium-002",
+      "category": "addition",
+      "difficulty": "medium",
+      "expression": "8 + 6",
+      "correctAnswer": 14,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "add-medium-003",
+      "category": "addition",
+      "difficulty": "medium",
+      "expression": "9 + 7",
+      "correctAnswer": 16,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "add-medium-004",
+      "category": "addition",
+      "difficulty": "medium",
+      "expression": "10 + 8",
+      "correctAnswer": 18,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "add-medium-005",
+      "category": "addition",
+      "difficulty": "medium",
+      "expression": "11 + 9",
+      "correctAnswer": 20,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "sub-easy-001",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "2 - 1",
+      "correctAnswer": 1,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-002",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "3 - 1",
+      "correctAnswer": 2,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-003",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "4 - 1",
+      "correctAnswer": 3,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-004",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "5 - 1",
+      "correctAnswer": 4,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-005",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "10 - 1",
+      "correctAnswer": 9,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-006",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "4 - 2",
+      "correctAnswer": 2,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-007",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "5 - 2",
+      "correctAnswer": 3,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-008",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "6 - 2",
+      "correctAnswer": 4,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-009",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "7 - 2",
+      "correctAnswer": 5,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-010",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "10 - 2",
+      "correctAnswer": 8,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-011",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "6 - 3",
+      "correctAnswer": 3,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-012",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "7 - 3",
+      "correctAnswer": 4,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-013",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "8 - 3",
+      "correctAnswer": 5,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-014",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "9 - 3",
+      "correctAnswer": 6,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-easy-015",
+      "category": "subtraction",
+      "difficulty": "easy",
+      "expression": "10 - 3",
+      "correctAnswer": 7,
+      "tags": ["basic"]
+    },
+    {
+      "id": "sub-medium-001",
+      "category": "subtraction",
+      "difficulty": "medium",
+      "expression": "15 - 7",
+      "correctAnswer": 8,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "sub-medium-002",
+      "category": "subtraction",
+      "difficulty": "medium",
+      "expression": "16 - 8",
+      "correctAnswer": 8,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "sub-medium-003",
+      "category": "subtraction",
+      "difficulty": "medium",
+      "expression": "18 - 9",
+      "correctAnswer": 9,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "sub-medium-004",
+      "category": "subtraction",
+      "difficulty": "medium",
+      "expression": "20 - 10",
+      "correctAnswer": 10,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "sub-medium-005",
+      "category": "subtraction",
+      "difficulty": "medium",
+      "expression": "17 - 9",
+      "correctAnswer": 8,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "mul-easy-001",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "1 × 1",
+      "correctAnswer": 1,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-easy-002",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "2 × 1",
+      "correctAnswer": 2,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-easy-003",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "3 × 1",
+      "correctAnswer": 3,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-easy-004",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "2 × 2",
+      "correctAnswer": 4,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-easy-005",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "2 × 3",
+      "correctAnswer": 6,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-easy-006",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "2 × 4",
+      "correctAnswer": 8,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-easy-007",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "2 × 5",
+      "correctAnswer": 10,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-easy-008",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "3 × 2",
+      "correctAnswer": 6,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-easy-009",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "3 × 3",
+      "correctAnswer": 9,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-easy-010",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "4 × 2",
+      "correctAnswer": 8,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-easy-011",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "5 × 1",
+      "correctAnswer": 5,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-easy-012",
+      "category": "multiplication",
+      "difficulty": "easy",
+      "expression": "5 × 2",
+      "correctAnswer": 10,
+      "tags": ["basic", "times-table"]
+    },
+    {
+      "id": "mul-medium-001",
+      "category": "multiplication",
+      "difficulty": "medium",
+      "expression": "4 × 3",
+      "correctAnswer": 12,
+      "tags": ["intermediate", "times-table"]
+    },
+    {
+      "id": "mul-medium-002",
+      "category": "multiplication",
+      "difficulty": "medium",
+      "expression": "4 × 4",
+      "correctAnswer": 16,
+      "tags": ["intermediate", "times-table"]
+    },
+    {
+      "id": "mul-medium-003",
+      "category": "multiplication",
+      "difficulty": "medium",
+      "expression": "5 × 3",
+      "correctAnswer": 15,
+      "tags": ["intermediate", "times-table"]
+    },
+    {
+      "id": "mul-medium-004",
+      "category": "multiplication",
+      "difficulty": "medium",
+      "expression": "5 × 4",
+      "correctAnswer": 20,
+      "tags": ["intermediate", "times-table"]
+    },
+    {
+      "id": "mul-medium-005",
+      "category": "multiplication",
+      "difficulty": "medium",
+      "expression": "6 × 2",
+      "correctAnswer": 12,
+      "tags": ["intermediate", "times-table"]
+    },
+    {
+      "id": "div-easy-001",
+      "category": "division",
+      "difficulty": "easy",
+      "expression": "2 ÷ 1",
+      "correctAnswer": 2,
+      "tags": ["basic"]
+    },
+    {
+      "id": "div-easy-002",
+      "category": "division",
+      "difficulty": "easy",
+      "expression": "4 ÷ 2",
+      "correctAnswer": 2,
+      "tags": ["basic"]
+    },
+    {
+      "id": "div-easy-003",
+      "category": "division",
+      "difficulty": "easy",
+      "expression": "6 ÷ 2",
+      "correctAnswer": 3,
+      "tags": ["basic"]
+    },
+    {
+      "id": "div-easy-004",
+      "category": "division",
+      "difficulty": "easy",
+      "expression": "8 ÷ 2",
+      "correctAnswer": 4,
+      "tags": ["basic"]
+    },
+    {
+      "id": "div-easy-005",
+      "category": "division",
+      "difficulty": "easy",
+      "expression": "10 ÷ 2",
+      "correctAnswer": 5,
+      "tags": ["basic"]
+    },
+    {
+      "id": "div-easy-006",
+      "category": "division",
+      "difficulty": "easy",
+      "expression": "6 ÷ 3",
+      "correctAnswer": 2,
+      "tags": ["basic"]
+    },
+    {
+      "id": "div-easy-007",
+      "category": "division",
+      "difficulty": "easy",
+      "expression": "9 ÷ 3",
+      "correctAnswer": 3,
+      "tags": ["basic"]
+    },
+    {
+      "id": "div-easy-008",
+      "category": "division",
+      "difficulty": "easy",
+      "expression": "4 ÷ 1",
+      "correctAnswer": 4,
+      "tags": ["basic"]
+    },
+    {
+      "id": "div-easy-009",
+      "category": "division",
+      "difficulty": "easy",
+      "expression": "8 ÷ 4",
+      "correctAnswer": 2,
+      "tags": ["basic"]
+    },
+    {
+      "id": "div-easy-010",
+      "category": "division",
+      "difficulty": "easy",
+      "expression": "10 ÷ 5",
+      "correctAnswer": 2,
+      "tags": ["basic"]
+    },
+    {
+      "id": "div-medium-001",
+      "category": "division",
+      "difficulty": "medium",
+      "expression": "12 ÷ 3",
+      "correctAnswer": 4,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "div-medium-002",
+      "category": "division",
+      "difficulty": "medium",
+      "expression": "15 ÷ 3",
+      "correctAnswer": 5,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "div-medium-003",
+      "category": "division",
+      "difficulty": "medium",
+      "expression": "16 ÷ 4",
+      "correctAnswer": 4,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "div-medium-004",
+      "category": "division",
+      "difficulty": "medium",
+      "expression": "20 ÷ 4",
+      "correctAnswer": 5,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "div-medium-005",
+      "category": "division",
+      "difficulty": "medium",
+      "expression": "18 ÷ 6",
+      "correctAnswer": 3,
+      "tags": ["intermediate"]
+    },
+    {
+      "id": "mixed-easy-001",
+      "category": "mixed",
+      "difficulty": "easy",
+      "expression": "2 + 3",
+      "correctAnswer": 5,
+      "tags": ["basic", "addition"]
+    },
+    {
+      "id": "mixed-easy-002",
+      "category": "mixed",
+      "difficulty": "easy",
+      "expression": "5 - 2",
+      "correctAnswer": 3,
+      "tags": ["basic", "subtraction"]
+    },
+    {
+      "id": "mixed-easy-003",
+      "category": "mixed",
+      "difficulty": "easy",
+      "expression": "3 × 2",
+      "correctAnswer": 6,
+      "tags": ["basic", "multiplication"]
+    },
+    {
+      "id": "mixed-easy-004",
+      "category": "mixed",
+      "difficulty": "easy",
+      "expression": "6 ÷ 2",
+      "correctAnswer": 3,
+      "tags": ["basic", "division"]
+    },
+    {
+      "id": "mixed-easy-005",
+      "category": "mixed",
+      "difficulty": "easy",
+      "expression": "4 + 4",
+      "correctAnswer": 8,
+      "tags": ["basic", "addition"]
+    },
+    {
+      "id": "mixed-medium-001",
+      "category": "mixed",
+      "difficulty": "medium",
+      "expression": "7 + 8",
+      "correctAnswer": 15,
+      "tags": ["intermediate", "addition"]
+    },
+    {
+      "id": "mixed-medium-002",
+      "category": "mixed",
+      "difficulty": "medium",
+      "expression": "14 - 6",
+      "correctAnswer": 8,
+      "tags": ["intermediate", "subtraction"]
+    },
+    {
+      "id": "mixed-medium-003",
+      "category": "mixed",
+      "difficulty": "medium",
+      "expression": "6 × 3",
+      "correctAnswer": 18,
+      "tags": ["intermediate", "multiplication"]
+    },
+    {
+      "id": "mixed-medium-004",
+      "category": "mixed",
+      "difficulty": "medium",
+      "expression": "20 ÷ 5",
+      "correctAnswer": 4,
+      "tags": ["intermediate", "division"]
+    },
+    {
+      "id": "mixed-medium-005",
+      "category": "mixed",
+      "difficulty": "medium",
+      "expression": "9 + 7",
+      "correctAnswer": 16,
+      "tags": ["intermediate", "addition"]
+    },
+    {
+      "id": "add-hard-001",
+      "category": "addition",
+      "difficulty": "hard",
+      "expression": "25 + 17",
+      "correctAnswer": 42,
+      "tags": ["advanced"]
+    },
+    {
+      "id": "add-hard-002",
+      "category": "addition",
+      "difficulty": "hard",
+      "expression": "38 + 24",
+      "correctAnswer": 62,
+      "tags": ["advanced"]
+    },
+    {
+      "id": "sub-hard-001",
+      "category": "subtraction",
+      "difficulty": "hard",
+      "expression": "50 - 23",
+      "correctAnswer": 27,
+      "tags": ["advanced"]
+    },
+    {
+      "id": "sub-hard-002",
+      "category": "subtraction",
+      "difficulty": "hard",
+      "expression": "75 - 38",
+      "correctAnswer": 37,
+      "tags": ["advanced"]
+    },
+    {
+      "id": "mul-hard-001",
+      "category": "multiplication",
+      "difficulty": "hard",
+      "expression": "7 × 8",
+      "correctAnswer": 56,
+      "tags": ["advanced", "times-table"]
+    },
+    {
+      "id": "mul-hard-002",
+      "category": "multiplication",
+      "difficulty": "hard",
+      "expression": "9 × 7",
+      "correctAnswer": 63,
+      "tags": ["advanced", "times-table"]
+    },
+    {
+      "id": "div-hard-001",
+      "category": "division",
+      "difficulty": "hard",
+      "expression": "48 ÷ 6",
+      "correctAnswer": 8,
+      "tags": ["advanced"]
+    },
+    {
+      "id": "div-hard-002",
+      "category": "division",
+      "difficulty": "hard",
+      "expression": "56 ÷ 7",
+      "correctAnswer": 8,
+      "tags": ["advanced"]
+    }
+  ],
+  "categories": {
+    "addition": 27,
+    "subtraction": 22,
+    "multiplication": 20,
+    "division": 17,
+    "mixed": 10
+  }
+}
