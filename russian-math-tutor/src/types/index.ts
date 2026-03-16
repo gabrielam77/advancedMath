@@ -94,7 +94,28 @@ export interface SessionState {
   sessionData?: Session;
 }
 
-// Hebrew number mappings for speech recognition
+// ─── User management ─────────────────────────────────────────────────────────
+
+export interface UserProfile {
+  userId: string;
+  username: string;        // lowercase, immutable
+  displayName: string;
+  avatarEmoji: string;
+  createdAt: string;       // ISO timestamp
+}
+
+export interface UserCredentials {
+  username: string;
+  passwordHash: string;    // SHA-256(password + salt)
+  salt: string;
+}
+
+export interface AuthState {
+  isLoggedIn: boolean;
+  currentUser: UserProfile | null;
+}
+
+// ─── Hebrew number mappings for speech recognition ───────────────────────────
 export const HEBREW_NUMBERS: Record<string, number> = {
   'אפס': 0,
   'אחד': 1,

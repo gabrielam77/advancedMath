@@ -34,12 +34,8 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
   
   const { isListening, isSpeaking, isSupported, speak, listen, parseNumber, stop, error } = useVoiceRecognition();
 
-  // Auto-start session when component mounts
-  useEffect(() => {
-    if (!isSessionActive && !session) {
-      startSession();
-    }
-  }, []);
+  // Declared here so it can be referenced in the useEffect below startSession.
+  const startedRef = useRef(false);
 
   const startSession = useCallback(async () => {
     if (!isSupported) {
@@ -63,11 +59,24 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
     }
   }, [isSupported, speak, category, difficulty, questionCount]);
 
+  // Auto-start exactly once on mount. Using a ref prevents the effect from
+  // re-firing if startSession's identity changes (it closes over props).
+  useEffect(() => {
+    if (!startedRef.current && !isSessionActive && !session) {
+      startedRef.current = true;
+      startSession();
+    }
+  }, [startSession, isSessionActive, session]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const askNextQuestion = useCallback(async (currentSession: Session) => {
     const question = QuestionService.getNextQuestion(currentSession);
     
     if (!question) {
-      await handleSessionComplete(currentSession);
+      // Ensure endTime is stamped so duration calculation in handleSessionComplete is non-zero.
+      const completedSession: Session = currentSession.endTime
+        ? currentSession
+        : { ...currentSession, endTime: new Date().toISOString() };
+      await handleSessionComplete(completedSession);
       return;
     }
 
