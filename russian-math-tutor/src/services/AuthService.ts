@@ -229,7 +229,13 @@ export class AuthService {
       StorageUtils.set(LS_USERS_KEY, users);
       localStorage.removeItem(`mth_progress_${userId}`);
     }
-    this.logout();
+    // Only clear the session when the account being deleted belongs to the
+    // currently logged-in user. An admin deleting another user's account must
+    // not be logged out as a side-effect.
+    const session = this.getSession();
+    if (session?.userId === userId) {
+      this.logout();
+    }
   }
 
   // ── Update profile ────────────────────────────────────────────────────────

@@ -75,7 +75,8 @@ export class UserService {
   // ─── Account deletion ──────────────────────────────────────────────────────
 
   static async deleteAccount(userId: string, username: string): Promise<void> {
+    // AuthService.deleteAccount handles both MongoDB removal and localStorage
+    // cleanup (including progress key and conditional session logout).
     await AuthService.deleteAccount(userId, username);
-    this.deleteLocalProgress(userId);
   }
 }
