@@ -31,6 +31,7 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
   const [status, setStatus] = useState<string>('לחצו על "התחל" כדי להתחיל');
   const [dragonMessage, setDragonMessage] = useState<string>('');
   const [dragonMood, setDragonMood] = useState<'happy' | 'encouraging' | 'neutral'>('neutral');
+  const [reviewCount, setReviewCount] = useState(0);
   
   const { isListening, isSpeaking, isSupported, speak, listen, parseNumber, stop, error } = useVoiceRecognition();
 
@@ -46,13 +47,23 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
     try {
       setIsSessionActive(true);
       setStatus('מתחילים שיעור...');
-      
-      const newSession = QuestionService.createSession(category, difficulty, questionCount);
+
+      const weakIds = progressService.getWeakQuestionIds();
+      const newSession = weakIds.length > 0
+        ? QuestionService.createAdaptiveSession(weakIds, category, difficulty, questionCount)
+        : QuestionService.createSession(category, difficulty, questionCount);
+
+      const sessionReviewCount = newSession.questions.filter(q => q.isReview).length;
+      setReviewCount(sessionReviewCount);
       setSession(newSession);
-      
-      await speak('שלום! בואו נפתור תרגילים.');
+
+      if (sessionReviewCount > 0) {
+        await speak(`שלום! בואו נחזור על ${sessionReviewCount} שאלות שהיו קשות, יחד עם תרגילים חדשים.`);
+      } else {
+        await speak('שלום! בואו נפתור תרגילים.');
+      }
       await askNextQuestion(newSession);
-      
+
     } catch (err) {
       setStatus(`שגיאה: ${err instanceof Error ? err.message : 'שגיאה לא ידועה'}`);
       setIsSessionActive(false);
@@ -85,7 +96,7 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
     
     try {
       await speak(questionText);
-      setStatus(`שאלה: ${question.expression} = ?`);
+      setStatus(`${question.isReview ? '🔁 חזרה: ' : 'שאלה: '}${question.expression} = ?`);
       
       // Listen for answer
       const speechResult = await listen();
@@ -118,8 +129,12 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
 
     if (currentQ.isCorrect) {
       setDragonMood('happy');
-      setDragonMessage('כל הכבוד! אתה מדהים! 🎉');
-      await speak('נכון! כל הכבוד!');
+      setDragonMessage(
+        currentQ.isReview
+          ? '🌟 מעולה! השתפרת בשאלה הזו!'
+          : 'כל הכבוד! אתה מדהים! 🎉'
+      );
+      await speak(currentQ.isReview ? 'נכון! השתפרת! כל הכבוד!' : 'נכון! כל הכבוד!');
       setStatus(`נכון! ${currentQ.expression} = ${currentQ.correctAnswer}`);
     } else {
       setDragonMood('encouraging');
@@ -161,6 +176,18 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
     };
 
     progressService.completeSession(sessionSummary);
+
+    // ── Adaptive learning: update weak question list ──────────────────────────
+    // Remove any review questions the user got right this time
+    const reviewCorrectIds = completedSession.questions
+      .filter(q => q.isReview && q.isCorrect)
+      .map(q => q.id);
+    progressService.removeWeakQuestions(reviewCorrectIds);
+
+    // Add all wrong answers to the weak list for next session
+    const wrongIds = completedSession.errors.map(e => e.id);
+    progressService.addWeakQuestions(wrongIds);
+    // ─────────────────────────────────────────────────────────────────────────
 
     // Report results
     const resultText = `בסך הכל היו ${summary.totalQuestions} שאלות, תשובות שגויות: ${summary.incorrectCount}`;
@@ -233,9 +260,16 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
           className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
         >
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-              מאמן מתמטיקה
-            </h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
+                מאמן מתמטיקה
+              </h2>
+              {reviewCount > 0 && (
+                <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 rounded-full text-sm font-bold border border-amber-300 dark:border-amber-600">
+                  🔁 חזרה על {reviewCount} שאלות
+                </span>
+              )}
+            </div>
             <button
               onClick={() => {
                 stop();

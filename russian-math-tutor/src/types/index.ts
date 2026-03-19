@@ -20,6 +20,7 @@ export interface Question {
   correctAnswer: number;
   userAnswer?: number;
   isCorrect?: boolean;
+  isReview?: boolean;  // true when this question is a repeat of a previous wrong answer
   category?: QuestionCategory;
   difficulty?: DifficultyLevel;
 }
@@ -65,6 +66,7 @@ export interface StudentProgress {
   lastSessionDate: string;
   streak: number;
   sessionHistory: SessionSummary[];
+  weakQuestionIds?: string[];  // IDs of questions answered incorrectly in recent sessions
 }
 
 export interface SessionSummary {

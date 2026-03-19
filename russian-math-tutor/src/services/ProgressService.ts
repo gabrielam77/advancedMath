@@ -54,7 +54,11 @@ export class ProgressService {
 
   private loadFromStorage(): StudentProgress {
     const stored = StorageUtils.get<StudentProgress>(this.storageKey());
-    if (stored) return stored;
+    if (stored) {
+      // Migrate existing data: ensure weakQuestionIds field exists
+      if (!stored.weakQuestionIds) stored.weakQuestionIds = [];
+      return stored;
+    }
 
     const fresh: StudentProgress = {
       totalQuestionsAnswered: 0,
@@ -70,6 +74,7 @@ export class ProgressService {
       lastSessionDate: new Date().toISOString(),
       streak: 0,
       sessionHistory: [],
+      weakQuestionIds: [],
     };
     StorageUtils.set(this.storageKey(), fresh);
     return fresh;
@@ -188,6 +193,33 @@ export class ProgressService {
       strongestCategory:  this.getStrongestCategory(),
       totalSessions:      this.progress.sessionHistory.length,
     };
+  }
+
+  // ─── Adaptive learning: weak question tracking ────────────────────────────
+
+  public getWeakQuestionIds(): string[] {
+    return this.progress.weakQuestionIds ?? [];
+  }
+
+  /** Add question IDs to the weak list (deduplicates, caps at 30 most recent). */
+  public addWeakQuestions(ids: string[]): void {
+    if (ids.length === 0) return;
+    const current = new Set(this.progress.weakQuestionIds ?? []);
+    ids.forEach(id => current.add(id));
+    let arr = Array.from(current);
+    if (arr.length > 30) arr = arr.slice(arr.length - 30);
+    this.progress.weakQuestionIds = arr;
+    this.saveProgress(this.progress);
+  }
+
+  /** Remove question IDs from the weak list (called when user answers them correctly). */
+  public removeWeakQuestions(ids: string[]): void {
+    if (ids.length === 0) return;
+    const toRemove = new Set(ids);
+    this.progress.weakQuestionIds = (this.progress.weakQuestionIds ?? []).filter(
+      id => !toRemove.has(id)
+    );
+    this.saveProgress(this.progress);
   }
 
   public resetProgress(): boolean {

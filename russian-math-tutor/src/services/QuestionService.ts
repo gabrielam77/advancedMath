@@ -210,4 +210,68 @@ export class QuestionService {
   public static searchQuestions(term: string): QuestionTemplate[] {
     return this.db.searchQuestions(term);
   }
+
+  /**
+   * Create an adaptive session that prioritises previously-wrong questions.
+   *
+   * Up to 60 % of the session will be review questions (shuffled in among
+   * fresh ones so the user can't tell which is which).  Questions that no
+   * longer exist in the database are silently skipped.
+   */
+  public static createAdaptiveSession(
+    weakQuestionIds: string[],
+    category?: QuestionCategory,
+    difficulty?: DifficultyLevel,
+    questionCount: number = 10
+  ): Session {
+    // Resolve weak-question templates; filter to match current category/difficulty
+    const weakTemplates = weakQuestionIds
+      .map(id => this.db.getQuestionById(id))
+      .filter((t): t is QuestionTemplate => t !== undefined)
+      .filter(t => {
+        if (category && t.category !== category) return false;
+        if (difficulty && t.difficulty !== difficulty) return false;
+        return true;
+      });
+
+    // Shuffle and cap at 60 % of the session
+    const shuffledWeak = [...weakTemplates].sort(() => Math.random() - 0.5);
+    const maxReview = Math.ceil(questionCount * 0.6);
+    const reviewTemplates = shuffledWeak.slice(0, Math.min(maxReview, shuffledWeak.length));
+    const usedIds = new Set(reviewTemplates.map(t => t.id));
+
+    // Fill the rest with fresh questions
+    const remainingCount = questionCount - reviewTemplates.length;
+    const freshTemplates = remainingCount > 0
+      ? this.db
+          .getRandomQuestions(remainingCount + 5, category, difficulty)
+          .filter(t => !usedIds.has(t.id))
+          .slice(0, remainingCount)
+      : [];
+
+    // Interleave so review questions aren't bunched at the start
+    const allTemplates = [...reviewTemplates, ...freshTemplates]
+      .sort(() => Math.random() - 0.5);
+
+    const reviewIdSet = new Set(reviewTemplates.map(t => t.id));
+    const questions: Question[] = allTemplates.map(template => ({
+      id: template.id,
+      expression: template.expression,
+      correctAnswer: template.correctAnswer,
+      category: template.category,
+      difficulty: template.difficulty,
+      isReview: reviewIdSet.has(template.id),
+    }));
+
+    return {
+      currentLabel: 1,
+      questions,
+      currentQuestionIndex: 0,
+      errors: [],
+      isComplete: false,
+      category,
+      difficulty,
+      startTime: new Date().toISOString(),
+    };
+  }
 }

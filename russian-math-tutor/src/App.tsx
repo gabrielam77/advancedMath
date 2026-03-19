@@ -32,6 +32,8 @@ function App() {
   const [statsRefresh, setStatsRefresh] = useState(0);
 
   const categories = QuestionService.getAvailableCategories();
+  // Recomputes on every re-render triggered by statsRefresh
+  const weakQuestionCount = progressService.getWeakQuestionIds().length;
 
   const handleLoginSuccess = () => setAppState('setup');
   const handleStartSession = () => setAppState('session');
@@ -154,7 +156,14 @@ function App() {
                   initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
                   className="space-y-8">
                   <div className="flex justify-center mb-8">
-                    <DragonMascot mood="happy" message="היי! בוא נלמד מתמטיקה ביחד! 🎓" />
+                    <DragonMascot
+                      mood="happy"
+                      message={
+                        weakQuestionCount > 0
+                          ? `היי! יש לך ${weakQuestionCount} שאלות לחזרה — בואו נתרגל אותן! 🔁`
+                          : 'היי! בוא נלמד מתמטיקה ביחד! 🎓'
+                      }
+                    />
                   </div>
 
                   <div className="grid lg:grid-cols-3 gap-6 items-start justify-items-center">
@@ -179,14 +188,21 @@ function App() {
                         </div>
                       </div>
 
-                      <motion.button
-                        whileHover={{ scale: 1.05, rotate: [0, -2, 2, 0] }} whileTap={{ scale: 0.95 }}
-                        animate={{ boxShadow: ['0 0 30px rgba(16,185,129,0.7)', '0 0 60px rgba(16,185,129,1)', '0 0 30px rgba(16,185,129,0.7)'] }}
-                        transition={{ boxShadow: { duration: 2, repeat: Infinity }, rotate: { duration: 0.5 } }}
-                        onClick={handleStartSession}
-                        className="w-full py-6 bg-gradient-to-r from-green-500 via-emerald-600 to-teal-600 text-white text-2xl font-black rounded-2xl shadow-2xl border-4 border-yellow-400">
-                        ✨🎯 התחל תרגול! 🚀✨
-                      </motion.button>
+                      <div className="space-y-2">
+                        {weakQuestionCount > 0 && (
+                          <p className="text-center text-sm font-bold text-amber-600 dark:text-amber-300">
+                            🔁 הסשן הבא יכלול חזרה על {weakQuestionCount} שאלות שהיו קשות
+                          </p>
+                        )}
+                        <motion.button
+                          whileHover={{ scale: 1.05, rotate: [0, -2, 2, 0] }} whileTap={{ scale: 0.95 }}
+                          animate={{ boxShadow: ['0 0 30px rgba(16,185,129,0.7)', '0 0 60px rgba(16,185,129,1)', '0 0 30px rgba(16,185,129,0.7)'] }}
+                          transition={{ boxShadow: { duration: 2, repeat: Infinity }, rotate: { duration: 0.5 } }}
+                          onClick={handleStartSession}
+                          className="w-full py-6 bg-gradient-to-r from-green-500 via-emerald-600 to-teal-600 text-white text-2xl font-black rounded-2xl shadow-2xl border-4 border-yellow-400">
+                          {weakQuestionCount > 0 ? '🔁✨ התחל תרגול עם חזרה! 🚀✨' : '✨🎯 התחל תרגול! 🚀✨'}
+                        </motion.button>
+                      </div>
                     </div>
 
                     {/* Right: per-user progress */}
