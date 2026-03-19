@@ -32,6 +32,8 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
   const [dragonMessage, setDragonMessage] = useState<string>('');
   const [dragonMood, setDragonMood] = useState<'happy' | 'encouraging' | 'neutral'>('neutral');
   const [reviewCount, setReviewCount] = useState(0);
+  const [isListeningForAnswer, setIsListeningForAnswer] = useState(false);
+  const repeatRequestedRef = useRef(false);
   
   const { isListening, isSpeaking, isSupported, speak, listen, parseNumber, stop, error } = useVoiceRecognition();
 
@@ -99,11 +101,17 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
       setStatus(`${question.isReview ? '🔁 חזרה: ' : 'שאלה: '}${question.expression} = ?`);
       
       // Listen for answer
+      setIsListeningForAnswer(true);
       const speechResult = await listen();
+      setIsListeningForAnswer(false);
       const answer = parseNumber(speechResult);
       
       if (answer !== null) {
         await processAnswer(currentSession, answer);
+      } else if (repeatRequestedRef.current) {
+        // User pressed Repeat — silently re-ask without "could not understand"
+        repeatRequestedRef.current = false;
+        setTimeout(() => askNextQuestion(currentSession), 300);
       } else {
         setStatus('לא הצלחתי לזהות את התשובה. נסו שוב.');
         await speak('לא הצלחתי לזהות את התשובה. אנא חזרו על זה.');
@@ -215,7 +223,13 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
     setIsSessionActive(false);
     setSession(null);
     setCurrentQuestion(null);
+    setIsListeningForAnswer(false);
     setStatus('השיעור הופסק');
+  }, [stop]);
+
+  const repeatQuestion = useCallback(() => {
+    repeatRequestedRef.current = true;
+    stop(); // interrupts the active listen(), causing it to return null
   }, [stop]);
 
   if (!isSupported) {
@@ -292,7 +306,7 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
           )}
 
           {/* Indicators */}
-          <div className="flex gap-4 justify-center mt-6">
+          <div className="flex flex-wrap gap-4 justify-center mt-6">
             {isListening && (
               <motion.div
                 animate={{ scale: [1, 1.1, 1] }}
@@ -310,6 +324,18 @@ export const VoiceController: React.FC<VoiceControllerProps> = ({
               >
                 🔊 מדבר...
               </motion.div>
+            )}
+            {isListeningForAnswer && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={repeatQuestion}
+                className="px-4 py-2 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full font-semibold border border-orange-300 dark:border-orange-600 cursor-pointer"
+              >
+                🔊 חזור על השאלה
+              </motion.button>
             )}
           </div>
         </motion.div>
