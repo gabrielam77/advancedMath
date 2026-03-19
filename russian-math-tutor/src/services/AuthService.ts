@@ -20,7 +20,9 @@ export interface AuthResult {
   user?: UserProfile;
 }
 
-interface MongoUser extends UserProfile, UserCredentials {}
+interface MongoUser extends UserProfile, UserCredentials {
+  hashVersion?: number;  // 1 = SHA-256 (legacy), 2 = PBKDF2 (current)
+}
 
 interface StoredSession {
   userId: string;
@@ -48,7 +50,23 @@ export class AuthService {
     return Array.from(buf).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
+  /** PBKDF2-SHA-256, 100 000 iterations, 256-bit output (hashVersion 2). */
   static async hashPassword(password: string, salt: string): Promise<string> {
+    const enc = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw', enc.encode(password), { name: 'PBKDF2' }, false, ['deriveBits']
+    );
+    const bits = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', salt: enc.encode(salt), iterations: 100_000, hash: 'SHA-256' },
+      key, 256
+    );
+    return Array.from(new Uint8Array(bits))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  /** Legacy SHA-256 hash used by hashVersion 1 records — only for migration. */
+  private static async hashPasswordLegacy(password: string, salt: string): Promise<string> {
     const encoder = new TextEncoder();
     const data = encoder.encode(password + salt);
     const buf = await crypto.subtle.digest('SHA-256', data);
@@ -113,7 +131,7 @@ export class AuthService {
     const doc: MongoUser = {
       userId, username, displayName, avatarEmoji,
       createdAt: new Date().toISOString(),
-      passwordHash, salt,
+      passwordHash, salt, hashVersion: 2,
     };
     await MongoDBService.insertOne('users', doc);
 
@@ -136,7 +154,7 @@ export class AuthService {
     const doc: MongoUser = {
       userId, username, displayName, avatarEmoji,
       createdAt: new Date().toISOString(),
-      passwordHash, salt,
+      passwordHash, salt, hashVersion: 2,
     };
     users.push(doc);
     StorageUtils.set(LS_USERS_KEY, users);
@@ -165,8 +183,23 @@ export class AuthService {
     const user = await MongoDBService.findOne<MongoUser>('users', { username });
     if (!user) return { success: false, error: 'שם משתמש או סיסמה שגויים' };
 
-    const hash = await this.hashPassword(password, user.salt);
-    if (hash !== user.passwordHash) return { success: false, error: 'שם משתמש או סיסמה שגויים' };
+    if (user.hashVersion === 2) {
+      // Current algorithm — verify with PBKDF2
+      const hash = await this.hashPassword(password, user.salt);
+      if (hash !== user.passwordHash) return { success: false, error: 'שם משתמש או סיסמה שגויים' };
+    } else {
+      // Legacy SHA-256 record — verify then silently upgrade to PBKDF2
+      const legacyHash = await this.hashPasswordLegacy(password, user.salt);
+      if (legacyHash !== user.passwordHash) return { success: false, error: 'שם משתמש או סיסמה שגויים' };
+
+      const newHash = await this.hashPassword(password, user.salt);
+      await MongoDBService.updateOne(
+        'users',
+        { userId: user.userId },
+        { $set: { passwordHash: newHash, hashVersion: 2 } },
+        false
+      );
+    }
 
     const profile = this.docToProfile(user);
     this.persistSession(profile);
@@ -178,8 +211,20 @@ export class AuthService {
     const user = users.find(u => u.username === username);
     if (!user) return { success: false, error: 'שם משתמש או סיסמה שגויים' };
 
-    const hash = await this.hashPassword(password, user.salt);
-    if (hash !== user.passwordHash) return { success: false, error: 'שם משתמש או סיסמה שגויים' };
+    if (user.hashVersion === 2) {
+      // Current algorithm — verify with PBKDF2
+      const hash = await this.hashPassword(password, user.salt);
+      if (hash !== user.passwordHash) return { success: false, error: 'שם משתמש או סיסמה שגויים' };
+    } else {
+      // Legacy SHA-256 record — verify then silently upgrade to PBKDF2
+      const legacyHash = await this.hashPasswordLegacy(password, user.salt);
+      if (legacyHash !== user.passwordHash) return { success: false, error: 'שם משתמש או סיסמה שגויים' };
+
+      const newHash = await this.hashPassword(password, user.salt);
+      const idx = users.findIndex(u => u.userId === user.userId);
+      users[idx] = { ...users[idx], passwordHash: newHash, hashVersion: 2 };
+      StorageUtils.set(LS_USERS_KEY, users);
+    }
 
     const profile = this.docToProfile(user);
     this.persistSession(profile);
